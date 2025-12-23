@@ -1,20 +1,37 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# 面向眼科医生的 λ 演算入门教程
 
-# Run and deploy your AI Studio app
+这是一个基于 React 的交互式教程应用，旨在向非计算机专业人士（原文设定为眼科医生）介绍 Lambda 演算（λ-calculus）的核心概念。
 
-This contains everything you need to run your app locally.
+本项目复刻并扩展了经典的科普文章系列，通过可视化的解释器帮助用户理解这一计算理论的基石。
 
-View your app in AI Studio: https://ai.studio/apps/drive/17MTSphW3-3KeeNQtspELowi6n8UZODgu
+## 教程内容
 
-## Run Locally
+应用包含以下章节，循序渐进地讲解：
 
-**Prerequisites:**  Node.js
+1.  **简介**：Lambda 演算的基本概念与字符替换。
+2.  **Hello World**：函数的定义与应用，恒等函数。
+3.  **选择逻辑**：如何通过函数构建 True/False 选择器。
+4.  **变量的区别**：自由变量 (Free) 与约束变量 (Bound) 的概念。
+5.  **语法规则**：结合律与符号替换规则。
+6.  **道生一 (Church Numerals)**：如何从零开始构造数字与加法。
+7.  **一生二 (Pairs)**：数据结构的构造。
+8.  **二生三 (Logic)**：逻辑运算 (AND, NOT, IF) 的实现。
+9.  **三生万物 (Recursion)**：Y Combinator 与递归的奥秘。
+10. **历史与背景**：希尔伯特、哥德尔、图灵与邱奇的故事。
 
+## 功能特性
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+*   **交互式 LCI 解释器**：模拟 Lambda 演算的归约过程（Reduction），直观展示每一步的替换逻辑。
+*   **分步演示**：每个知识点都配有具体的代码示例，用户可以手动点击“下一步”观察演变。
+*   **响应式设计**：适配移动端与桌面端，提供流畅的阅读体验。
+
+## 技术栈
+
+*   React 19
+*   Tailwind CSS (Styling)
+*   Lucide React (Icons)
+*   TypeScript
+
+## 关于
+
+本教程致敬了那些伟大的计算先驱，并试图证明：仅仅利用简单的字符替换操作，就可以构造出大千世界。

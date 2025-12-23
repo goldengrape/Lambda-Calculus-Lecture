@@ -240,6 +240,163 @@ export const LESSONS: LessonContent[] = [
     }
   },
   {
+    title: "一生二",
+    type: LessonType.PAIRS,
+    content: (
+      <div className="space-y-6">
+        <h2 className="text-2xl font-bold text-slate-900">一生二：数据结构 (Part 6)</h2>
+        <p className="text-slate-700">
+          有了 Church Numeral 以后，非负整数都可以定义了。但编程还需要数据结构。
+          最基本的数据结构就是<strong>数据对 (Pair)</strong>。
+        </p>
+
+        <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm space-y-4">
+            <div>
+                <h3 className="font-bold text-slate-900">1. 构造 (Pair)</h3>
+                <code className="block bg-slate-100 p-2 rounded mt-1 font-mono text-sm text-blue-700">pair = λx.λy.λz.(z x y)</code>
+                <p className="text-xs text-slate-500 mt-1">pair a b 的结果是 λz.z a b。它保存了 a 和 b，等待一个函数 z 来处理它们。</p>
+            </div>
+            <div>
+                <h3 className="font-bold text-slate-900">2. 取第一个 (First)</h3>
+                <code className="block bg-slate-100 p-2 rounded mt-1 font-mono text-sm text-blue-700">first = λp.p (λx.λy.x)</code>
+                <p className="text-xs text-slate-500 mt-1">这里 λx.λy.x 就是 True (选择第一个)。first 把 True 喂给 pair。</p>
+            </div>
+            <div>
+                <h3 className="font-bold text-slate-900">3. 取第二个 (Second)</h3>
+                <code className="block bg-slate-100 p-2 rounded mt-1 font-mono text-sm text-blue-700">second = λp.p (λx.λy.y)</code>
+                <p className="text-xs text-slate-500 mt-1">这里 λx.λy.y 就是 False (选择第二个)。second 把 False 喂给 pair。</p>
+            </div>
+        </div>
+
+        <p className="text-slate-700">
+            仔细看看这定义，简直是无中生有。有了 Pair，我们就可以构造链表（List = Pair Head Tail），甚至复数、有理数。
+            只要有相应的运算法则，万物皆可构造。
+        </p>
+      </div>
+    ),
+    interactive: {
+      id: 'pair-construct',
+      expression: 'pair a b',
+      explanation: '构造一个数据对。',
+      steps: simulateReduction('PAIR_CONSTRUCT')
+    }
+  },
+  {
+    title: "二生三",
+    type: LessonType.LOGIC,
+    content: (
+      <div className="space-y-6">
+        <h2 className="text-2xl font-bold text-slate-900">二生三：逻辑运算 (Part 7)</h2>
+        <p className="text-slate-700">
+          也许是我见得少，物理学的公式里为什么都是连续函数，一个分段函数都没有？
+          甚至，量子力学的出现就是为了解决黑体辐射中出现的分段函数。
+        </p>
+
+        <p className="text-slate-700">
+          但只要出了理论物理，世界就需要<strong>三叉分支结构</strong>：
+          一支接收条件判断，一支指向真值时的操作，一支指向假值时的操作：
+        </p>
+
+        <div className="bg-slate-100 border-l-4 border-slate-500 p-4 font-mono text-sm">
+           if True/False then This else That
+        </div>
+
+        <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm space-y-4">
+           <div>
+               <h3 className="font-bold text-slate-900 mb-2">基础定义</h3>
+               <ul className="space-y-2 text-sm font-mono text-blue-700">
+                 <li className="bg-slate-50 p-2 rounded">true = λx.λy.x <span className="text-slate-500 text-xs ml-2">// 选择前一个</span></li>
+                 <li className="bg-slate-50 p-2 rounded">false = λx.λy.y <span className="text-slate-500 text-xs ml-2">// 选择后一个 (同 0)</span></li>
+               </ul>
+           </div>
+           <div>
+               <h3 className="font-bold text-slate-900 mb-2">逻辑运算</h3>
+               <ul className="space-y-2 text-sm font-mono text-purple-700">
+                 <li className="bg-slate-50 p-2 rounded">and = λp.λq.(p q p)</li>
+                 <li className="bg-slate-50 p-2 rounded">not = λp.(p false true)</li>
+                 <li className="bg-slate-50 p-2 rounded">if = λp.λa.λb.(p a b) <span className="text-slate-500 text-xs ml-2">// 其实就是 pair</span></li>
+               </ul>
+           </div>
+        </div>
+
+        <p className="text-slate-700">
+           看 <code>not</code> 的结构，它把输入的 <code>p</code> 放到前面来调用。
+           如果 <code>p</code> 是 <code>true</code>，它就会选择前面的 <code>false</code>。
+           如果 <code>p</code> 是 <code>false</code>，它就会选择后面的 <code>true</code>。
+           精巧！
+        </p>
+      </div>
+    ),
+    interactive: {
+      id: 'logic-not',
+      expression: 'not true',
+      explanation: '演示逻辑非运算：not true = false',
+      steps: simulateReduction('LOGIC_NOT')
+    }
+  },
+  {
+    title: "三生万物",
+    type: LessonType.RECURSION,
+    content: (
+      <div className="space-y-6">
+        <h2 className="text-2xl font-bold text-slate-900">三生万物：Y Combinator (Part 8)</h2>
+        <p className="text-slate-700">
+          有数据、数据结构、分支结构，就差<strong>循环</strong>了。
+        </p>
+        
+        <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg">
+             <p className="text-sm text-slate-800">
+                <strong>Y Combinator vs YC:</strong> 创业孵化器 Y Combinator 的名字正是来源于此。
+                创始人 Paul Graham 也是一位黑客和 Lisp 爱好者，他认为 λ 演算可以 Hack 世界。
+             </p>
+        </div>
+
+        <h3 className="text-xl font-bold text-slate-900 mt-4">匿名递归的挑战</h3>
+        <p className="text-slate-700">
+            通常我们写递归函数是这样的（例如 Fibonacci）：
+        </p>
+        <pre className="bg-slate-800 text-slate-200 p-3 rounded text-sm overflow-x-auto">
+{`定义函数 fib(n):
+    如果 n < 2，返回 n
+    否则，返回 fib(n-1) + fib(n-2)`}
+        </pre>
+        <p className="text-slate-700">
+            但在 λ 演算中，函数是匿名的。你不能在函数内部调用函数自己，因为它没有名字。
+            <br/>
+            <em>"我叫你的名字你敢答应么？" —— "呵呵，我没名字。"</em>
+        </p>
+
+        <h3 className="text-xl font-bold text-slate-900 mt-4">Ω (Omega) 与 Y</h3>
+        <p className="text-slate-700">
+            虽然没有名字，但我们可以把自己传给自己。
+            <code>ω = (λx.x x)</code>，那么 <code>ω ω</code> 就会变成 <code>(λx.x x) (λx.x x)</code>，无限循环。
+            但这只是死循环。
+        </p>
+        <p className="text-slate-700">
+            我们需要 <strong>Y Combinator</strong>，它能把外来的函数塞进循环里，实现真正的递归。
+        </p>
+        <div className="bg-purple-50 p-4 rounded border border-purple-200 font-mono text-sm text-purple-900 break-all">
+            Y = λf.(λx.f (x x)) (λx.f (x x))
+        </div>
+        <p className="text-slate-700">
+            <code>Y foo</code> 会展开成 <code>foo (Y foo)</code>，也就是 <code>foo (foo (Y foo))</code>...
+            递归出现了！
+        </p>
+
+        <div className="mt-8 border-t pt-6 text-center">
+            <h4 className="text-lg font-bold text-slate-900">道生一，一生二，二生三，三生万物。</h4>
+            <p className="text-slate-600 mt-2">少年，你可以去创造世界了。</p>
+        </div>
+      </div>
+    ),
+    interactive: {
+      id: 'recursion-omega',
+      expression: '(λx.x x) (λx.x x)',
+      explanation: 'Ω (Omega) Combinator：最简单的死循环。',
+      steps: simulateReduction('RECURSION_OMEGA')
+    }
+  },
+  {
     title: "历史与背景",
     type: LessonType.HISTORY,
     content: (

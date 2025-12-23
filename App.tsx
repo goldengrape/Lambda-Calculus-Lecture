@@ -39,6 +39,9 @@ function App() {
   // Variables: 'FREE' | 'BOUND'
   // Syntax: 'SYMBOLIC' | 'ASSOCIATIVITY'
   // Church: 'ADD_1_1' | 'ADD_1_2'
+  // Pairs: 'CONSTRUCT' | 'FIRST' | 'SECOND'
+  // Logic: 'NOT' | 'AND' | 'IF'
+  // Recursion: 'OMEGA' | 'Y_COMB'
   const [demoMode, setDemoMode] = useState<string>('DEFAULT');
 
   const currentLesson = LESSONS[currentLessonIndex];
@@ -47,6 +50,9 @@ function App() {
   const isVariables = currentLesson.type === LessonType.VARIABLES;
   const isSyntax = currentLesson.type === LessonType.SYNTAX;
   const isChurch = currentLesson.type === LessonType.CHURCH_NUMERALS;
+  const isPairs = currentLesson.type === LessonType.PAIRS;
+  const isLogic = currentLesson.type === LessonType.LOGIC;
+  const isRecursion = currentLesson.type === LessonType.RECURSION;
 
   const handleDemoToggle = (mode: string) => {
     setDemoMode(mode);
@@ -180,6 +186,173 @@ function App() {
       }
   }
 
+  if (isPairs) {
+    if (demoMode === 'FIRST') {
+      activeInteractiveData = {
+        id: 'pair-first',
+        expression: 'first (pair a b)',
+        explanation: '演示从 Pair 中提取第一个元素 (car)。',
+        steps: [
+          {
+            before: 'first (pair a b)',
+            action: '我们已知 (pair a b) 等价于 λz. z a b。代入 first 定义 (λp. p (λx.λy.x))。',
+            after: '(λp. p (λx.λy.x)) (λz. z a b)'
+          },
+          {
+            before: '(λp. p (λx.λy.x)) (λz. z a b)',
+            action: '将 pair (λz. z a b) 代入 p。',
+            after: '(λz. z a b) (λx.λy.x)'
+          },
+          {
+            before: '(λz. z a b) (λx.λy.x)',
+            action: '神奇的一步：这里 (λx.λy.x) 其实就是选择器 True（选择第一个）。把它代入 z。',
+            after: '(λx.λy.x) a b'
+          },
+          {
+            before: '(λx.λy.x) a b',
+            action: '选择器 True 选择了第一个参数 a。',
+            after: 'a'
+          }
+        ]
+      };
+    } else if (demoMode === 'SECOND') {
+      activeInteractiveData = {
+        id: 'pair-second',
+        expression: 'second (pair a b)',
+        explanation: '演示从 Pair 中提取第二个元素 (cdr)。',
+        steps: [
+          {
+            before: 'second (pair a b)',
+            action: '我们已知 (pair a b) 等价于 λz. z a b。代入 second 定义 (λp. p (λx.λy.y))。',
+            after: '(λp. p (λx.λy.y)) (λz. z a b)'
+          },
+          {
+            before: '(λp. p (λx.λy.y)) (λz. z a b)',
+            action: '将 pair (λz. z a b) 代入 p。',
+            after: '(λz. z a b) (λx.λy.y)'
+          },
+          {
+            before: '(λz. z a b) (λx.λy.y)',
+            action: '神奇的一步：这里 (λx.λy.y) 其实就是选择器 False（选择第二个）。把它代入 z。',
+            after: '(λx.λy.y) a b'
+          },
+          {
+            before: '(λx.λy.y) a b',
+            action: '选择器 False 选择了第二个参数 b。',
+            after: 'b'
+          }
+        ]
+      };
+    } else {
+        // Default is CONSTRUCT
+        activeInteractiveData = currentLesson.interactive;
+    }
+  }
+
+  if (isLogic) {
+    if (demoMode === 'AND') {
+      activeInteractiveData = {
+        id: 'logic-and',
+        expression: 'and true false',
+        explanation: '演示逻辑与：true AND false = false',
+        steps: [
+          {
+            before: 'and true false',
+            action: '展开 and 定义: (λp.λq. p q p) true false',
+            after: '(λp.λq. p q p) true false'
+          },
+           {
+            before: '(λp.λq. p q p) true false',
+            action: '代入参数 p=true, q=false: true false true',
+            after: 'true false true'
+          },
+          {
+            before: 'true false true',
+            action: '展开 true 为选择器: (λx.λy.x) false true',
+            after: '(λx.λy.x) false true'
+          },
+          {
+            before: '(λx.λy.x) false true',
+            action: '选择第一个参数: false',
+            after: 'false'
+          }
+        ]
+      };
+    } else if (demoMode === 'IF') {
+       activeInteractiveData = {
+        id: 'logic-if',
+        expression: 'if true a b',
+        explanation: '演示条件判断：if true a b = a',
+        steps: [
+          {
+            before: 'if true a b',
+            action: '展开 if 定义: (λp.λa.λb. p a b) true a b',
+            after: '(λp.λa.λb. p a b) true a b'
+          },
+          {
+            before: '(λp.λa.λb. p a b) true a b',
+            action: '代入所有参数: true a b',
+            after: 'true a b'
+          },
+          {
+            before: 'true a b',
+            action: '展开 true: (λx.λy.x) a b',
+            after: '(λx.λy.x) a b'
+          },
+          {
+            before: '(λx.λy.x) a b',
+            action: 'True 选择第一个参数: a',
+            after: 'a'
+          }
+        ]
+      };
+    } else {
+       // Default is NOT
+       activeInteractiveData = currentLesson.interactive;
+    }
+  }
+
+  if (isRecursion) {
+    if (demoMode === 'Y_COMB') {
+      const yPart = '(λx.λy.( y (x x y)))';
+      activeInteractiveData = {
+        id: 'recursion-y',
+        expression: 'Y foo',
+        explanation: '演示 Y Combinator 如何实现递归调用：Y foo = foo (Y foo)。',
+        steps: [
+          {
+            before: `Y foo`,
+            action: `展开 Y 的定义 (由两个相同的 Ypart 组成): ${yPart} ${yPart} foo`,
+            after: `${yPart} ${yPart} foo`
+          },
+          {
+            before: `${yPart} ${yPart} foo`,
+            action: `将第二个 Ypart 代入第一个 Ypart 的 x 中。`,
+            after: `(λy.( y (${yPart} ${yPart} y))) foo`
+          },
+          {
+            before: `(λy.( y (${yPart} ${yPart} y))) foo`,
+            action: `将 foo 代入 y 中。`,
+            after: `foo (${yPart} ${yPart} foo)`
+          },
+          {
+            before: `foo (${yPart} ${yPart} foo)`,
+            action: `观察括号内部： ${yPart} ${yPart} 其实就是原来的 Y。`,
+            after: `foo (Y foo)`
+          },
+          {
+            before: `foo (Y foo)`,
+            action: `我们得到了递归！ Y foo 变成了 foo (Y foo)。可以无限展开为 foo (foo (Y foo))...`,
+            after: `foo (foo (Y foo))`
+          }
+        ]
+      };
+    } else {
+      // Default is OMEGA
+       activeInteractiveData = currentLesson.interactive;
+    }
+  }
+
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col md:flex-row">
       {/* Mobile Header */}
@@ -195,15 +368,15 @@ function App() {
 
       {/* Sidebar Navigation */}
       <aside className={`
-        fixed md:sticky md:top-0 h-screen w-64 bg-white border-r border-slate-200 z-10 transition-transform duration-300 ease-in-out
+        fixed md:sticky md:top-0 h-screen w-64 bg-white border-r border-slate-200 z-10 transition-transform duration-300 ease-in-out flex flex-col
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}>
-        <div className="p-6 border-b border-slate-100 hidden md:flex items-center gap-2">
+        <div className="p-6 border-b border-slate-100 hidden md:flex items-center gap-2 shrink-0">
             <BrainCircuit className="text-blue-600" size={28} />
             <h1 className="font-bold text-xl text-slate-900 tracking-tight">LambdaMed</h1>
         </div>
         
-        <nav className="p-4 space-y-2">
+        <nav className="p-4 space-y-2 flex-1 overflow-y-auto">
           {LESSONS.map((lesson, index) => (
             <button
               key={lesson.type}
@@ -212,7 +385,7 @@ function App() {
                 setDemoMode('DEFAULT'); // Reset demo mode on lesson change
                 setIsSidebarOpen(false);
               }}
-              className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 transition-all ${
+              className={`w-full text-left px-4 py-3 rounded-lg flex items-center gap-3 transition-all shrink-0 ${
                 index === currentLessonIndex 
                   ? 'bg-blue-50 text-blue-700 font-semibold shadow-sm ring-1 ring-blue-100' 
                   : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
@@ -225,7 +398,7 @@ function App() {
           ))}
         </nav>
 
-        <div className="absolute bottom-0 w-full p-6 border-t border-slate-100 bg-slate-50/50">
+        <div className="p-6 border-t border-slate-100 bg-slate-50/50 shrink-0">
           <p className="text-xs text-slate-400">
             基于系列文章：“面向眼科医生的λ演算入门教程”
           </p>
@@ -322,6 +495,77 @@ function App() {
                     >
                         演示 1 + 2
                         <code className="block text-xs font-normal opacity-80 mt-1">add 1 2</code>
+                    </button>
+                 </div>
+               )}
+
+               {isPairs && (
+                 <div className="flex gap-4 mb-4 flex-wrap">
+                    <button 
+                        onClick={() => handleDemoToggle('CONSTRUCT')}
+                        className={`px-4 py-2 rounded text-sm font-semibold border transition-colors ${demoMode === 'CONSTRUCT' || demoMode === 'DEFAULT' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-slate-600 border-slate-300 hover:bg-slate-50'}`}
+                    >
+                        构造 pair
+                        <code className="block text-xs font-normal opacity-80 mt-1">pair a b</code>
+                    </button>
+                    <button 
+                        onClick={() => handleDemoToggle('FIRST')}
+                        className={`px-4 py-2 rounded text-sm font-semibold border transition-colors ${demoMode === 'FIRST' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-slate-600 border-slate-300 hover:bg-slate-50'}`}
+                    >
+                        提取 first
+                        <code className="block text-xs font-normal opacity-80 mt-1">first (pair a b)</code>
+                    </button>
+                    <button 
+                        onClick={() => handleDemoToggle('SECOND')}
+                        className={`px-4 py-2 rounded text-sm font-semibold border transition-colors ${demoMode === 'SECOND' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-slate-600 border-slate-300 hover:bg-slate-50'}`}
+                    >
+                        提取 second
+                        <code className="block text-xs font-normal opacity-80 mt-1">second (pair a b)</code>
+                    </button>
+                 </div>
+               )}
+
+               {isLogic && (
+                 <div className="flex gap-4 mb-4 flex-wrap">
+                    <button 
+                        onClick={() => handleDemoToggle('NOT')}
+                        className={`px-4 py-2 rounded text-sm font-semibold border transition-colors ${demoMode === 'NOT' || demoMode === 'DEFAULT' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-slate-600 border-slate-300 hover:bg-slate-50'}`}
+                    >
+                        not true
+                        <code className="block text-xs font-normal opacity-80 mt-1">not true</code>
+                    </button>
+                    <button 
+                        onClick={() => handleDemoToggle('AND')}
+                        className={`px-4 py-2 rounded text-sm font-semibold border transition-colors ${demoMode === 'AND' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-slate-600 border-slate-300 hover:bg-slate-50'}`}
+                    >
+                        and true false
+                        <code className="block text-xs font-normal opacity-80 mt-1">and true false</code>
+                    </button>
+                    <button 
+                        onClick={() => handleDemoToggle('IF')}
+                        className={`px-4 py-2 rounded text-sm font-semibold border transition-colors ${demoMode === 'IF' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-slate-600 border-slate-300 hover:bg-slate-50'}`}
+                    >
+                        if true a b
+                        <code className="block text-xs font-normal opacity-80 mt-1">if true a b</code>
+                    </button>
+                 </div>
+               )}
+
+               {isRecursion && (
+                 <div className="flex gap-4 mb-4 flex-wrap">
+                    <button 
+                        onClick={() => handleDemoToggle('OMEGA')}
+                        className={`px-4 py-2 rounded text-sm font-semibold border transition-colors ${demoMode === 'OMEGA' || demoMode === 'DEFAULT' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-slate-600 border-slate-300 hover:bg-slate-50'}`}
+                    >
+                        Ω (死循环)
+                        <code className="block text-xs font-normal opacity-80 mt-1">ω ω</code>
+                    </button>
+                    <button 
+                        onClick={() => handleDemoToggle('Y_COMB')}
+                        className={`px-4 py-2 rounded text-sm font-semibold border transition-colors ${demoMode === 'Y_COMB' ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-slate-600 border-slate-300 hover:bg-slate-50'}`}
+                    >
+                        Y Combinator
+                        <code className="block text-xs font-normal opacity-80 mt-1">Y foo</code>
                     </button>
                  </div>
                )}

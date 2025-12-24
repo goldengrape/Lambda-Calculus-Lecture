@@ -11,6 +11,7 @@ export enum LessonType {
   LOGIC = 'LOGIC',
   RECURSION = 'RECURSION',
   HISTORY = 'HISTORY',
+  PLAYGROUND = 'PLAYGROUND',
 }
 
 export interface LessonStep {

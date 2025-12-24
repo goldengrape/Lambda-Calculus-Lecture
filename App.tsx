@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { LESSONS } from './constants';
 import { LessonType } from './types';
 import { LambdaConsole } from './components/LambdaConsole';
+import { LambdaPlayground } from './components/LambdaPlayground';
 import { HistoryCard } from './components/HistoryCard';
-import { BookOpen, Monitor, ChevronRight, Menu, X, BrainCircuit } from 'lucide-react';
+import { BookOpen, Monitor, ChevronRight, Menu, X, BrainCircuit, Terminal } from 'lucide-react';
 
 // Specific History Data used in the history section
 const HISTORY_DATA = [
@@ -35,17 +36,12 @@ function App() {
   const [currentLessonIndex, setCurrentLessonIndex] = useState(0);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   // Reusing demoMode string state for different lessons
-  // Selectors: 'TRUE' | 'FALSE'
-  // Variables: 'FREE' | 'BOUND'
-  // Syntax: 'SYMBOLIC' | 'ASSOCIATIVITY'
-  // Church: 'ADD_1_1' | 'ADD_1_2'
-  // Pairs: 'CONSTRUCT' | 'FIRST' | 'SECOND'
-  // Logic: 'NOT' | 'AND' | 'IF'
-  // Recursion: 'OMEGA' | 'Y_COMB'
   const [demoMode, setDemoMode] = useState<string>('DEFAULT');
 
   const currentLesson = LESSONS[currentLessonIndex];
   const isHistory = currentLesson.type === LessonType.HISTORY;
+  const isPlayground = currentLesson.type === LessonType.PLAYGROUND;
+  
   const isSelectors = currentLesson.type === LessonType.SELECTORS;
   const isVariables = currentLesson.type === LessonType.VARIABLES;
   const isSyntax = currentLesson.type === LessonType.SYNTAX;
@@ -391,7 +387,7 @@ function App() {
                   : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
               }`}
             >
-              {lesson.type === LessonType.HISTORY ? <BookOpen size={18} /> : <Monitor size={18} />}
+              {lesson.type === LessonType.PLAYGROUND ? <Terminal size={18}/> : lesson.type === LessonType.HISTORY ? <BookOpen size={18} /> : <Monitor size={18} />}
               <span>{lesson.title}</span>
               {index === currentLessonIndex && <ChevronRight size={16} className="ml-auto" />}
             </button>
@@ -423,7 +419,7 @@ function App() {
           )}
 
           {/* Interactive Console Section */}
-          {activeInteractiveData && !isHistory && (
+          {activeInteractiveData && !isHistory && !isPlayground && (
             <div className="mt-10">
                {isSelectors && (
                  <div className="flex gap-4 mb-4 flex-wrap">
@@ -572,6 +568,13 @@ function App() {
 
                <LambdaConsole key={activeInteractiveData.id} data={activeInteractiveData} />
             </div>
+          )}
+
+          {/* Playground Section */}
+          {isPlayground && (
+              <div className="mt-10">
+                  <LambdaPlayground />
+              </div>
           )}
         </div>
 

@@ -425,5 +425,27 @@ export const LESSONS: LessonContent[] = [
         </div>
       </div>
     )
+  },
+  {
+    title: "实验场 (Playground)",
+    type: LessonType.PLAYGROUND,
+    content: (
+      <div className="space-y-6">
+        <h2 className="text-2xl font-bold text-slate-900">Lambda 实验场</h2>
+        <p className="text-slate-700">
+            在这里，你可以输入任意的 Lambda 表达式，看看它会如何一步步归约。
+            请随意尝试！
+        </p>
+        <div className="bg-purple-50 p-4 rounded-lg border border-purple-100 text-sm text-purple-900">
+            <h4 className="font-bold mb-2">小贴士：</h4>
+            <ul className="list-disc pl-5 space-y-1">
+                <li>可以使用 <code>λ</code> 或 <code>\</code> 来定义函数。</li>
+                <li>变量名可以是任意字母数字组合（如 <code>foo</code>, <code>x</code>）。</li>
+                <li>注意结合律：<code>x y z</code> 等于 <code>(x y) z</code>。</li>
+                <li>如果遇到无限循环（如 Ω），系统会在 50 步后自动停止。</li>
+            </ul>
+        </div>
+      </div>
+    )
   }
 ];
